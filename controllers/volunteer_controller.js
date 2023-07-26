@@ -1,7 +1,10 @@
 const Volunteer = require('../models/volunteer');
+const Languages = require('../models/languages');
+const Availability = require('../models/availability');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const secretKey = '56WiKUgEtciaSVPX7ZqMLpTsOAI1L5TF';
+
 
 module.exports.Register = async (req, res) => {
     try {
@@ -59,3 +62,72 @@ module.exports.Register = async (req, res) => {
       res.status(500).json({ error: 'An error occurred during login!' });
     }
   };
+
+  module.exports.AddLanguages = async (req, res) => {
+    
+    try{
+
+      const volunteerId = req.params.volunteerId;
+
+      const {languageName} = req.body;
+  
+      const volunteer = await Volunteer.findOne({volunteerId: volunteerId});
+  
+      if(!volunteer){
+        return res.status(401).json({
+          message: "Volunteer ID Not found!"
+      });
+      }
+
+      const addNewLanguage = await Languages.create({
+       languageName 
+      });
+
+
+      volunteer.languagesRequired.push(addNewLanguage._id);
+
+      await volunteer.save();
+
+  
+      return res.json({
+          languageAdded: addNewLanguage,
+          message: "Languages Added Successfully!!!"
+      });
+
+    }catch(error){
+      console.log(error);
+      return res.status(500).send({message: "Internal Server Error"});
+    }
+
+  }
+
+
+  module.exports.AddAvailibility = async (req, res) => {
+    try{
+
+      const volunteerId = req.params.volunteerId;
+
+      const volunteer = await Volunteer.findOne({volunteerId: volunteerId});
+  
+      if(!volunteer){
+        return res.status(401).json({
+          message: "Volunteer ID Not found!"
+      });
+      }
+
+      const addNewAvailability = await Availability.create(req.body);
+
+      volunteer.availability.push(addNewAvailability._id);
+
+      await volunteer.save();
+
+      return res.json({
+          availibilityAdded: addNewAvailability,
+          message: "Availability Added Successfully!!!"
+      });
+
+    }catch(error){
+      console.log(error);
+      return res.status(500).send({message: "Internal Server Error"});
+    }
+  }

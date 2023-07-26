@@ -22,14 +22,14 @@ const volunteerSchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
-    languages: { 
-        type: String, 
-        required: true 
-    },
-    availability: { 
-        type: String, 
-        required: true 
-    }
+    languagesRequired: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'languages'
+    }],
+    availability: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'availability'
+    }],
     
   }, {
     timestamps: true
