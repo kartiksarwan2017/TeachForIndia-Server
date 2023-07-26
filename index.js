@@ -1,11 +1,12 @@
 const express = require('express');
 const db = require('./config/mongoose');
 const cors = require('cors');
-const port = 8000;
+const port = process.env.PORT || 8000;
 const app = express();
 require('dotenv').config()
 
 app.use(cors());
+app.use(express.json());
 app.use('/', require('./routes'));
 
 app.listen(port, (err) => {
