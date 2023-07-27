@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const volunteerSchema = new mongoose.Schema({
+    classroom: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Classroom', 
+        default: null 
+    },
     name: { 
         type: String, 
         required: true 
@@ -29,8 +34,7 @@ const volunteerSchema = new mongoose.Schema({
     availability: {
         type: [String],
         required: true
-    },
-    
+    } 
   }, {
     timestamps: true
   });

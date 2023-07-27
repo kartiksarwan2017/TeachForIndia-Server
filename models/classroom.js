@@ -6,12 +6,10 @@ const classroomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    volunteers: [
-      {
+    volunteers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "volunteer",
-      },
-    ],
+    }],
     capacity: {
       type: Number,
       required: true,

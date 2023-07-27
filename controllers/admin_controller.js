@@ -1,5 +1,6 @@
 const Admin = require("../models/admin");
 const Volunteer = require("../models/volunteer");
+const Classroom = require('../models/classroom');
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const secretKey = '56WiKUgEtciaSVPX7ZqMLpTsOAI1L5TF';
@@ -86,3 +87,52 @@ module.exports.getAllVolunteers = async (req, res) => {
     
   }
 };
+
+
+module.exports.allocateClassroomsToVolunteers = async (req, res) => {
+
+  try {
+
+  // Retrieve classrooms from the database
+  const classrooms = await Classroom.find().lean();
+
+  // Retrieve volunteers from the database
+  const volunteers = await Volunteer.find().lean();
+
+  // Sort classrooms by capacity (ascending)
+  classrooms.sort((a, b) => a.capacity - b.capacity);
+
+  const allocatedClassrooms = {};
+
+  // Allocate volunteers to classrooms based on capacity
+  let allocatedVolunteersCount = 0;
+  for (const classroom of classrooms) {
+    const availableSeats = classroom.capacity - (allocatedClassrooms[classroom.classroomID]?.length || 0);
+    const volunteersForClassroom = volunteers.slice(allocatedVolunteersCount, allocatedVolunteersCount + availableSeats);
+    allocatedVolunteersCount += availableSeats;
+
+
+    // Store volunteer _id in classroom
+    const volunteerIds = volunteersForClassroom.map(volunteer => volunteer._id);
+    await Classroom.updateOne({ _id: classroom._id }, { $set: { volunteers: volunteerIds } });
+
+    // Store classroom _id in volunteers
+    const classroomId = classroom._id;
+    for (const volunteer of volunteersForClassroom) {
+      await Volunteer.updateOne({ _id: volunteer._id }, { $set: { classroom: classroomId } });
+    }
+
+    allocatedClassrooms[classroom.classroomID] = volunteersForClassroom;
+
+  }
+
+  // Respond with the allocated classrooms data
+  return res.json({
+    allocatedClassrooms,
+    "message": "Classroom Allocated Successfully!"
+  });
+
+} catch (error) {
+  return res.status(500).json({ error: 'Internal Server Error' });
+}
+}
