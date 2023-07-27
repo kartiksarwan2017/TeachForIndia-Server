@@ -1,38 +1,42 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const classroomSchema = new mongoose.Schema({
+const classroomSchema = new mongoose.Schema(
+  {
     classroomID: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    volunteers: [{
+    volunteers: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'volunteer'
-    }],
+        ref: "volunteer",
+      },
+    ],
     capacity: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     requirement: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
-    subjects: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'subjects'
-    }],
+    subjects: {
+      type: [String],
+      required: true,
+    },
     languageRequirement: {
-        type: [String],
-        default: []
+      type: [String],
+      default: [],
     },
     location: {
-        type: String,
-        required: true
-    }
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-}, {
-    timestamps: true
-});
-
-const Classroom = mongoose.model('classroom', classroomSchema);
+const Classroom = mongoose.model("classroom", classroomSchema);
 module.exports = Classroom;
