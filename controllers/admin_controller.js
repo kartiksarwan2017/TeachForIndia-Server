@@ -36,7 +36,7 @@ module.exports.Register = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error!" });
+    return res.status(500).json({ message: "Internal Server Error!" });
   }
 };
 
@@ -49,13 +49,13 @@ module.exports.Login = async (req, res) => {
     const admin = await Admin.findOne({ email });
 
     if (!admin) {
-      return res.status(401).json({ error: "Invalid email or password!" });
+      return res.status(401).json({ message: "Invalid email or password!" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, admin.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid email or password!" });
+      return res.status(401).json({ message: "Invalid email or password!" });
     }
 
     const token = jwt.sign({ adminId: admin._id }, secretKey, {
@@ -66,7 +66,7 @@ module.exports.Login = async (req, res) => {
 
   } catch (error) {
 
-    return res.status(500).json({ error: "An error occurred during login!" });
+    return res.status(500).json({ message: "An error occurred during login!" });
 
   }
 };
@@ -83,7 +83,7 @@ module.exports.getAllVolunteers = async (req, res) => {
 
   } catch (error) {
 
-    return res.status(500).json({ error: "Could not fetch volunteers!" });
+    return res.status(500).json({ message: "Could not fetch volunteers!" });
     
   }
 };
@@ -133,6 +133,6 @@ module.exports.allocateClassroomsToVolunteers = async (req, res) => {
   });
 
 } catch (error) {
-  return res.status(500).json({ error: 'Internal Server Error' });
+  return res.status(500).json({ message: 'Internal Server Error' });
 }
 }
