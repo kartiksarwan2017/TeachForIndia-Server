@@ -16,7 +16,7 @@ module.exports.Register = async (req, res) => {
     if(volunteer){
 
       return res.status(403).json({
-        "message": "Volunteer Already Exists!"
+        message: "Volunteer Already Exists!"
       });
 
     }
@@ -24,7 +24,7 @@ module.exports.Register = async (req, res) => {
     if(password !== confirm_password){
 
       return res.status(401).json({
-        "message": "Password Doesn't Matched!"
+        message: "Password Doesn't Matched!"
       });
 
     }
@@ -33,11 +33,11 @@ module.exports.Register = async (req, res) => {
 
       return res.status(201).json({
         newVolunteer,
-        "message": "Volunteer Created Successfully!"
+        message: "Volunteer Created Successfully!"
       });
 
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error!' });
+      return res.status(500).json({ message: 'Internal Server Error!' });
     }
   };
   
@@ -47,19 +47,18 @@ module.exports.Register = async (req, res) => {
     try {
       const volunteer = await Volunteer.findOne({ email });
       if (!volunteer) {
-        return res.status(401).json({ error: 'Invalid email or password!' });
+        return res.status(401).json({ message: 'Invalid email or password!' });
       }
   
       const isPasswordValid = await bcrypt.compare(password, volunteer.password);
       if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Invalid email or password!' });
+        return res.status(401).json({ message: 'Invalid email or password!' });
       }
   
       const token = jwt.sign({ userId: volunteer._id }, secretKey, { expiresIn: '1h' });
-      res.status(200).json({ message: 'Login successful!', token });
+      return res.status(200).json({ message: 'Login successful!', token });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'An error occurred during login!' });
+      return res.status(500).json({ message: 'An error occurred during login!' });
     }
   };
 
