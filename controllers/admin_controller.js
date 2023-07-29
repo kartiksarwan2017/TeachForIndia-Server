@@ -89,6 +89,30 @@ module.exports.getAllVolunteers = async (req, res) => {
 };
 
 
+module.exports.getSpecificVolunteer = async (req, res) => {
+
+  try {
+
+    const id = req.params.id;
+
+
+
+    const volunteer = await Volunteer.findOne({_id: id});
+    return res.status(200).json({
+       volunteer,
+      "message": "Specific Volunteer Details!"
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({ message: "Could not fetch volunteers!" });
+    
+  }
+};
+
+
+
+
 module.exports.allocateClassroomsToVolunteers = async (req, res) => {
 
   try {
